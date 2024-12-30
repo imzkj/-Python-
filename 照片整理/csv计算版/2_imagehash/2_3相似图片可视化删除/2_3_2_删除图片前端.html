@@ -142,12 +142,24 @@
         let currentIndex = 0;
         let currentRow = 0;
         let currentImage = null;
+        let file;
 
         // 读取并处理CSV文件
         document.getElementById('csvFile').addEventListener('change', handleFileSelect);
 
         function handleFileSelect(event) {
-            const file = event.target.files[0];
+            file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const csvData = e.target.result;
+                processCSV(csvData);
+            };
+            reader.readAsText(file);
+        }
+
+        function handleUpdate() {
             if (!file) return;
 
             const reader = new FileReader();
@@ -334,6 +346,7 @@
         function closePreview() {
             const preview = document.getElementById('imagePreview');
             preview.style.display = 'none';
+            handleUpdate();
         }
 
         // 图片切换
@@ -426,18 +439,22 @@
 
         // 删除当前预览图片
         function deletePreviewImage() {
+            const filePathInfo = document.getElementById('filePathInfo');
             fetch(`${API_BASE}/delete`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ filePath: currentImage } ),
+                body: JSON.stringify({ filePath: filePathInfo.textContent } ),
             }).then(response => {
                 if (response.ok) {
-                    closePreview();
-                    alert('图片已删除');
+                    // closePreview();
+                    // alert('图片已删除');
+                    navigatePreview(1)
                 } else {
                     alert('删除失败');
                 }
             });
+            // 默认显示所有行
+            // handleUpdate();
         }
 
         // 添加键盘事件监听

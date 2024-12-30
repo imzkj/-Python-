@@ -49,7 +49,7 @@ def convert_image():
         # 检查文件是否存在
         if not os.path.exists(file_path):
             print(f"{file_path} 文件不存在")
-            return send_file(r"F:\Warehouse\Epiboly\PythonProject\照片整理\csv计算版\2_imagehash\2_3相似图片可视化删除\不存在.jpg", mimetype='image/jpeg')
+            return send_file(r"F:\Warehouse\Epiboly\Pic_Deal_Python\照片整理\csv计算版\2_imagehash\2_3相似图片可视化删除\不存在.jpg", mimetype='image/jpeg')
 
         pic_formats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp']
         for pic_format in pic_formats:
