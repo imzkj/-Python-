@@ -93,6 +93,20 @@
         .next-btn {
             right: 10px;
         }
+        #imageInfo {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #imageInfo p {
+            margin: 5px 0;
+        }
+
     </style>
 </head>
 <body>
@@ -115,6 +129,12 @@
         <button class="preview-nav-btn next-btn" onclick="navigatePreview(1)">下一张</button>
         <img id="previewImg" src="" alt="放大查看图片">
         <button id="deletePreview" class="delete-btn" onclick="deletePreviewImage()">删除</button>
+
+        <!-- 新增的容器，用于显示当前图片的信息 -->
+        <div id="imageInfo">
+            <p><strong>行号: </strong><span id="rowNumberInfo"></span></p>
+            <p><strong>图片路径: </strong><span id="filePathInfo"></span></p>
+        </div>
     </div>
 
     <script>
@@ -194,7 +214,7 @@
                         const img = document.createElement('img');
                         const fileName = filePath.split('\\').pop();
                         img.alt = fileName;
-                        img.onclick = () => openPreview(img.src, rowIndex);
+                        img.onclick = () => openPreview(img.src, rowIndex, filePath);
 
                         const fileInfo = document.createElement('p');
                         fileInfo.textContent = `文件名: ${fileName}`;
@@ -223,7 +243,7 @@
                                 const img = document.createElement('img');
                                 img.src = URL.createObjectURL(blob);
                                 container.appendChild(img);
-                                img.onclick = () => openPreview(img.src, rowIndex); // 确保点击后能打开预览
+                                img.onclick = () => openPreview(img.src, rowIndex, filePath); // 确保点击后能打开预览
                             })
                             .catch(error => {
                                 const errorText = document.createElement('p');
@@ -239,7 +259,7 @@
                             fetch(`${API_BASE}/delete`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ filePath }),
+                                body: JSON.stringify({ filePath } ),
                             }).then(response => {
                                 if (response.ok) {
                                     container.remove();
@@ -291,15 +311,24 @@
             throw new Error('Max retries reached without result');
         }
         // 打开图片预览
-        function openPreview(src, rowIndex) {
+        function openPreview(src, rowIndex, filePath) {
             currentIndex = rowIndex;
             currentRow = rowIndex;
             const preview = document.getElementById('imagePreview');
             const previewImg = document.getElementById('previewImg');
+            const rowNumberInfo = document.getElementById('rowNumberInfo');
+            const filePathInfo = document.getElementById('filePathInfo');
+
+            // 更新预览图片的src
             previewImg.src = src;
             currentImage = src;
             preview.style.display = 'block';
+
+            // 更新行号和文件路径信息
+            rowNumberInfo.textContent = `第 ${currentRow + 1} 行`;  // 显示当前行号
+            filePathInfo.textContent = filePath;  // 显示图片路径
         }
+
 
         // 关闭图片预览
         function closePreview() {
@@ -309,9 +338,6 @@
 
         // 图片切换
         function navigatePreview(direction) {
-            console.log("direction ", direction)
-            console.log("currentRow ", currentRow)
-
 
             const imageDisplay = document.getElementById('imageDisplay');
             const rows = imageDisplay.getElementsByClassName('row');
@@ -330,6 +356,9 @@
             const nextRowList = rows[nextRowIndex];
             const nextImagesInRow = nextRowList.getElementsByTagName('img');
 
+            const rowNumberInfo = document.getElementById('rowNumberInfo');
+            const filePathInfo = document.getElementById('filePathInfo');
+
             let nextImage;
             if (nextImageIndex >= currentImagesInRow.length) {
                 currentRow = currentRow + direction
@@ -339,6 +368,10 @@
                     currentRow = 0;
                 }
                 nextImage = nextImagesInRow[0];
+
+                // 更新行号和文件路径信息
+                rowNumberInfo.textContent = `第 ${currentRow + 1} 行`;  // 显示当前行号
+                filePathInfo.textContent = getFilePathFromRowAtIndex(nextRowList, 0);  // 显示图片路径
             } else if (nextImageIndex < 0) {
                 currentRow = currentRow + direction
                 if (currentRow < 0) {
@@ -347,11 +380,48 @@
                     currentRow = 0;
                 }
                 nextImage = nextImagesInRow[nextImagesInRow.length - 1];
+
+                // 更新行号和文件路径信息
+                rowNumberInfo.textContent = `第 ${currentRow + 1} 行`;  // 显示当前行号
+                filePathInfo.textContent = getFilePathFromRowAtIndex(nextRowList, nextImagesInRow.length - 1);  // 显示图片路径
             } else {
                 nextImage = currentImagesInRow[nextImageIndex];
+
+                // 更新行号和文件路径信息
+                rowNumberInfo.textContent = `第 ${currentRow + 1} 行`;  // 显示当前行号
+                filePathInfo.textContent = getFilePathFromRowAtIndex(currentRowList, nextImageIndex);  // 显示图片路径
             }
             currentImage = nextImage.src;
             document.getElementById('previewImg').src = currentImage;
+        }
+
+        function getFilePathFromRowAtIndex(currentRowList, index) {
+            // 获取当前行中的所有 .image-container 元素
+            const containers = currentRowList.getElementsByClassName('image-container');
+
+            // 检查索引是否有效
+            if (index < 0 || index >= containers.length) {
+                console.error('索引超出范围');
+                return null;
+            }
+
+            // 获取指定索引的 .image-container
+            const container = containers[index];
+
+            // 获取该容器中的所有 <p> 标签
+            const paragraphs = container.getElementsByTagName('p');
+
+            // 遍历 <p> 标签，找到包含 "文件路径" 的那个
+            for (let paragraph of paragraphs) {
+                if (paragraph.textContent.startsWith('文件路径:')) {
+                    // 提取文件路径信息
+                    const filePath = paragraph.textContent.replace('文件路径: ', '').trim();
+                    return filePath;  // 返回文件路径
+                }
+            }
+
+            // 如果没有找到文件路径
+            return null;
         }
 
         // 删除当前预览图片
