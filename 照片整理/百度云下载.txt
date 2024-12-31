@@ -29,3 +29,10 @@ D:\桌面;
 F:\FileRecv;
 G:\尘封的回忆;
 K:\BaiduNetdiskDownload
+
+启动群晖
+"C:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe" start "C:\Virtual Machines\SA6400\SA6400.vmx" nogui
+关闭群晖
+"C:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe" stop "C:\Virtual Machines\SA6400\SA6400.vmx" hard
+查看运行列表
+"C:\Program Files (x86)\VMware\VMware Workstation\vmrun.exe" -T ws list
