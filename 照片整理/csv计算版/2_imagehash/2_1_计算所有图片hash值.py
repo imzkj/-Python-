@@ -11,6 +11,22 @@ from PIL import ImageFile
 Image.MAX_IMAGE_PIXELS = None  # 或者设置为一个更大的值
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
+import imghdr
+from PIL import Image
+import imagehash
+
+def is_image_file(file_path):
+    """
+    判断文件是否为图片
+    :param file_path: 文件路径
+    :return: 如果是图片返回 True，否则返回 False
+    """
+    try:
+        return imghdr.what(file_path) is not None
+    except Exception as e:
+        print(f"无法判断文件类型: {file_path}, 错误: {e}")
+        return False
+
 def calculate_image_hash(image_path, hash_method):
     """
     计算图片的感知哈希值。
@@ -18,6 +34,10 @@ def calculate_image_hash(image_path, hash_method):
     :param hash_method: 哈希方法（phash、average_hash、dhash）
     :return: 图片哈希值（str），如果无法计算返回 None
     """
+    if not is_image_file(image_path):
+        print(f"文件 {image_path} 不是图片，跳过处理")
+        return None
+
     try:
         with Image.open(image_path) as img:
             if hash_method == "phash":
@@ -27,8 +47,10 @@ def calculate_image_hash(image_path, hash_method):
             elif hash_method == "dhash":
                 return str(imagehash.dhash(img))
             else:
+                print(f"未知的哈希方法: {hash_method}")
                 return None
-    except Exception:
+    except Exception as e:
+        print(f"文件 {image_path} 获取 imagehash 异常: {e}")
         return None
 
 
