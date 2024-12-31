@@ -1,9 +1,10 @@
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import os
 import csv
 from PIL import Image
 import imagehash
+from tqdm import tqdm
 from PIL import ImageFile
 
 # 提高 Pillow 的像素限制
@@ -90,10 +91,15 @@ def process_directories(directories, output_csv_prefix, hash_methods, max_thread
     print(f"总共扫描{all_files}个文件，开始计算 imagehash...")
     # 使用多线程处理文件
     with ThreadPoolExecutor(max_threads) as executor:
-        for result in executor.map(process_file, file_paths, [hash_methods] * len(file_paths)):
-            if result:
-                all_image_files += 1
-                results.append(result)
+        future_to_file = {executor.submit(process_file, file_path, hash_methods): file_path for file_path in file_paths}
+        for future in tqdm(as_completed(future_to_file), total=len(future_to_file), desc="计算 ImageHash", unit="文件"):
+            try:
+                result = future.result()
+                if result:
+                    all_image_files += 1
+                    results.append(result)
+            except Exception as e:
+                print(f"处理文件时出错：{e}")
 
     print(f"总共扫描{all_files}个文件，成功处理{all_image_files}个图片")
     print("============================================================================================================")
