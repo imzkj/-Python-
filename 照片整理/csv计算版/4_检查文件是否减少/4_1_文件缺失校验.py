@@ -15,6 +15,8 @@ def update_file_existence(csv_file):
         for row in reader:
             if not os.path.exists(row["文件路径"]):
                 row["是否删除"] = "1"
+            else:
+                row["是否删除"] = "0"
             updated_rows.append(row)
 
     # 写回文件
