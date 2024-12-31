@@ -82,7 +82,7 @@ if __name__ == '__main__':
     # 用户输入阈值
     threshold = int(input("请输入哈希阈值："))
     for input_csv in input_csvs.split(";"):
-        hash_method = input_csv.replace(".csv", "").replace("总文件image_", "")
+        hash_method = input_csv.replace(".csv", "").replace("处理总文件image_", "")
         # 输出文件路径
         output_csv = f"按_{hash_method}_统计_{threshold}.csv"
 
