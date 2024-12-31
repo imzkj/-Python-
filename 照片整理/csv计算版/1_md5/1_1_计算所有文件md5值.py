@@ -19,6 +19,8 @@ def calculate_md5(file_path):
     except Exception as e:
         print(f"无法计算文件 {file_path} 的 MD5，错误: {e}")
         return None
+    finally:
+        f.close()  # 确保文件被关闭
 
 def process_file(file_path):
     """
@@ -75,7 +77,7 @@ def save_to_csv(data, output_file):
         writer.writerows(data)
 
 if __name__ == "__main__":
-    num_threads = 16384
+    num_threads = 64
 
     # 原始文件
     input_folders = r"D:\JisuCloud;D:\BaiduNetdiskDownload\pc08803;D:\BaiduNetdiskDownload\PS;D:\BaiduNetdiskDownload\相册·2;D:\桌面;F:\FileRecv;G:\尘封的回忆;K:\BaiduNetdiskDownload"

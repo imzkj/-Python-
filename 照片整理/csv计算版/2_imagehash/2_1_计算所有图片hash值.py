@@ -4,7 +4,11 @@ import os
 import csv
 from PIL import Image
 import imagehash
+from PIL import ImageFile
 
+# 提高 Pillow 的像素限制
+Image.MAX_IMAGE_PIXELS = None  # 或者设置为一个更大的值
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def calculate_image_hash(image_path, hash_method):
     """
@@ -52,7 +56,7 @@ def process_file(file_path, hash_methods):
             **hash_values  # 展开哈希值
         }
     else:
-        print(f"{file_name}不是图片")
+        # print(f"{file_name}不是图片")
         return None
 
 
@@ -83,6 +87,7 @@ def process_directories(directories, output_csv_prefix, hash_methods, max_thread
                 all_files += 1
                 file_paths.append(os.path.join(root, file))
 
+    print(f"总共扫描{all_files}个文件，开始计算 imagehash...")
     # 使用多线程处理文件
     with ThreadPoolExecutor(max_threads) as executor:
         for result in executor.map(process_file, file_paths, [hash_methods] * len(file_paths)):
@@ -91,6 +96,7 @@ def process_directories(directories, output_csv_prefix, hash_methods, max_thread
                 results.append(result)
 
     print(f"总共扫描{all_files}个文件，成功处理{all_image_files}个图片")
+    print("============================================================================================================")
 
     # 为每种哈希方法分别写入结果到 CSV 文件
     for hash_method in hash_methods:
