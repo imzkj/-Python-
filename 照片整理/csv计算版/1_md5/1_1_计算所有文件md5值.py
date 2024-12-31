@@ -78,7 +78,7 @@ if __name__ == "__main__":
     num_threads = 16384
 
     # 原始文件
-    input_folders = "I:\BaiduNetdiskDownload\单反\原始"
+    input_folders = r"D:\JisuCloud;D:\BaiduNetdiskDownload\pc08803;D:\BaiduNetdiskDownload\PS;D:\BaiduNetdiskDownload\相册·2;D:\桌面;F:\FileRecv;G:\尘封的回忆;K:\BaiduNetdiskDownload"
     output_csv = "原始总文件md5.csv"  # 输出文件名
     if not input_folders:
         print("未输入有效的目录路径，程序退出。")
@@ -92,7 +92,7 @@ if __name__ == "__main__":
         print(f"原始文件处理耗时： {elapsed_time} 秒")
 
     # 处理文件
-    input_folders = "I:\BaiduNetdiskDownload\单反\处理"
+    input_folders = r"I:\BaiduNetdiskDownload;J:\机械D;J:\机械F;J:\机械G"
     output_csv = "处理总文件md5.csv"  # 输出文件名
     if not input_folders:
         print("未输入有效的目录路径，程序退出。")

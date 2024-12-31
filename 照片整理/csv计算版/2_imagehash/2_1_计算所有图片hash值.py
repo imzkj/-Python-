@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
     # 原始文件
     start_time = time.time()
-    directories = r"I:\BaiduNetdiskDownload\单反\原始"  # 多个目录，用分号分隔
+    directories = r"D:\JisuCloud;D:\BaiduNetdiskDownload\pc08803;D:\BaiduNetdiskDownload\PS;D:\BaiduNetdiskDownload\相册·2;D:\桌面;F:\FileRecv;G:\尘封的回忆;K:\BaiduNetdiskDownload"  # 多个目录，用分号分隔
     process_directories(directories, "原始总文件image", hash_methods, max_threads)
     end_time = time.time()
     elapsed_time = end_time - start_time
@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     # 处理文件
     start_time = time.time()
-    directories = r"I:\BaiduNetdiskDownload\单反\处理"  # 多个目录，用分号分隔
+    directories = r"I:\BaiduNetdiskDownload;J:\机械D;J:\机械F;J:\机械G"  # 多个目录，用分号分隔
     process_directories(directories, "处理总文件image", hash_methods, max_threads)
     end_time = time.time()
     elapsed_time = end_time - start_time
