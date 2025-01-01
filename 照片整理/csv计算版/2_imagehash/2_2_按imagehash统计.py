@@ -77,7 +77,7 @@ def process_imagehash(input_csv, output_csv, threshold):
 
 
 if __name__ == '__main__':
-    # 输入文件路径
+    # 输入文件路径。dhash最严格
     input_csvs = "处理总文件image_dhash.csv;处理总文件image_average_hash.csv;处理总文件image_phash.csv"  # 输入文件
     # 用户输入阈值
     threshold = int(input("请输入哈希阈值："))

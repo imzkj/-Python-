@@ -46,7 +46,20 @@ def is_compressed_file(file_path):
         kind = filetype.guess(file_path)
         if kind is None:
             return False
-        return kind.mime in ["application/zip", "application/x-tar", "application/x-gzip", "application/x-bzip2"]
+        return kind.mime in ["application/x-rar-compressed", "application/zip", "application/x-tar", "application/x-gzip", "application/x-bzip2"]
+    except Exception as e:
+        print(f"无法判断文件类型: {file_path}, 错误: {e}")
+        return False
+
+def is_xmp_file(file_path):
+    """
+    判断文件是否为XMP
+    :param file_path: 文件路径
+    :return: 如果是XMP返回 True，否则返回 False
+    """
+    try:
+        _, ext = os.path.splitext(file_path)  # 获取文件扩展名
+        return ext.lower() == ".xmp"  # 判断扩展名是否为 .xmp
     except Exception as e:
         print(f"无法判断文件类型: {file_path}, 错误: {e}")
         return False
@@ -68,7 +81,7 @@ def process_csv(csv_file, user_input):
                     continue
 
                 # 判断文件是否为图片、视频或压缩包
-                if is_image_file(file_path) or is_video_file(file_path) or is_compressed_file(file_path):
+                if is_image_file(file_path) or is_video_file(file_path) or is_compressed_file(file_path) or is_xmp_file(file_path):
                     continue
 
                 # 如果不是图片、视频或压缩包，则打印文件路径并询问是否删除

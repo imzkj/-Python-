@@ -152,7 +152,7 @@ def process_directories(directories, output_csv_prefix, hash_methods, max_thread
 
 if __name__ == '__main__':
     max_threads = 128  # 指定线程数
-    hash_methods = ["phash", "average_hash", "dhash"]  # 多种哈希方法
+    hash_methods = ["phash", "average_hash", "dhash"]  # 多种哈希方法。dhash最严格
 
 
     # 原始文件

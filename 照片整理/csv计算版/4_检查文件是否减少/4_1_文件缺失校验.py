@@ -56,7 +56,6 @@ def find_missing_md5(original_csv, processed_csv):
     print("缺失MD5文件路径：")
     for md5, path in missing_md5.items():
         print(f"MD5: {md5}, 文件路径: {path}")
-    print(f"总计缺失: {len(missing_md5)} 个文件")
 
     return missing_md5
 
@@ -69,9 +68,6 @@ def find_similar_images(missing_md5, processed_image_csv, original_image_csv, th
     :param original_image_csv: 原始总文件 image_dhash CSV 文件路径
     :param threshold: 汉明距离阈值
     """
-    # 更新 image_dhash 文件的是否删除状态
-    update_file_existence(processed_image_csv)
-    # update_file_existence(original_image_csv)
 
     # 获取处理文件中未删除的 imagehash
     processed_images = []
@@ -121,6 +117,7 @@ def find_similar_images(missing_md5, processed_image_csv, original_image_csv, th
         for row in output_data:
             writer.writerow(row)
 
+    print(f"总计缺失: {len(missing_md5)} 个文件，其中 {len(missing_imagehash)} 个图片")
     print(f"相似图片结果已保存到 {output_csv}")
 
 
@@ -132,7 +129,11 @@ if __name__ == "__main__":
     threshold = int(input("请输入阈值: "))
 
     # 步骤 1 和 3：更新文件存在状态
+    update_file_existence(original_md5_csv)
     update_file_existence(processed_md5_csv)
+    # 更新 image_dhash 文件的是否删除状态
+    update_file_existence(processed_image_csv)
+    update_file_existence(original_image_csv)
 
     # 步骤 2：找出缺失的 MD5 文件路径
     missing_md5 = find_missing_md5(original_md5_csv, processed_md5_csv)
